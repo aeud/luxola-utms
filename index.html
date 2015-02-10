@@ -93,7 +93,7 @@
                         $scope.medium = data.mediums[0];
                         $scope.source = data.mediums[0].sources[0];
                     });
-                    $scope.toUTMShareLink = function(){
+                    var toUTMShareLink  = function(){
                         if ($scope.medium && $scope.source && validateCampaign()) {
                             var urlWithoutParameters;
                             var parametersString;
@@ -120,6 +120,7 @@
                             return url;
                         } else return '';   
                     }
+                    $scope.toUTMShareLink = toUTMShareLink;
                     var validateCampaign = function(){
                         if (!$scope.campaign) return false;
                         return $scope.campaign.length > 3;
@@ -133,7 +134,7 @@
                     var generateShortUrl = function(url){
                         console.log('test');
                         if (!$scope.shortUrls[url]) {
-                            $http.post('https://www.googleapis.com/urlshortener/v1/url?fields=id&alt=json&key=AIzaSyBmU2wjC5xwMIdKKHyyE_wW-6ZD4uzYsfs', {longUrl:'https://www.villa-bali.com/'
+                            $http.post('https://www.googleapis.com/urlshortener/v1/url?fields=id&alt=json&key=AIzaSyBmU2wjC5xwMIdKKHyyE_wW-6ZD4uzYsfs', {longUrl: toUTMShareLink()
                             }).success(function(data){
                                 $scope.shortUrls[url] = data.id;
                                 $scope.shortUrl = data.id;

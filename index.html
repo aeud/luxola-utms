@@ -43,13 +43,35 @@
                         <div class="form-group">
                             <label for="Medium" class="col-sm-2 control-label">Link to share</label>
                             <div class="col-sm-10">
-                                <input class="form-control" type="text" value="{{toUTMShareLink()}}" readonly>
+                                <div class="input-group">
+                                    <input class="form-control" type="text" value="{{toUTMShareLink()}}" readonly>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" clip-copy="copy(toUTMShareLink())">Copy</button>
+                                    </span>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="toUTMShareLink()">
+                            <label for="Medium" class="col-sm-2 control-label">Short URL</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" ng-click="generateShortUrl(toUTMShareLink())">Generate</button>
+                                    </span>
+                                    <input class="form-control" type="text" value="{{getShortUrl(toUTMShareLink())}}" readonly>
+                                    <span class="input-group-btn" ng-if="getShortUrl(toUTMShareLink())">
+                                        <button class="btn btn-default" type="button" clip-copy="copy(getShortUrl(toUTMShareLink()))">Copy</button>
+                                    </span>
+                                </div>
+                                
                             </div>
                         </div>
                         <div class="form-group" ng-if="toUTMShareLink()">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-default" clip-copy="copy(toUTMShareLink())">Copy URL</button>
-                                <button type="submit" class="btn btn-default" clip-copy="copy(toUTMShareLink())">Copy Short URL</button>
+                                <button class="btn btn-default" clip-copy="copy(toUTMShareLink())">Copy URL</button>
+                                <button class="btn btn-default">Generate Short URL</button>
+                                <button class="btn btn-default" clip-copy="copy(toUTMShareLink())">Copy Short URL</button>
                             </div>
                         </div>
                     </form>
@@ -67,8 +89,10 @@
                 }])
                 .controller('lxUTMCtrl', ['$scope', '$http', lxCtrl]);
                 function lxCtrl($scope, $http) {
+                    $scope.shortUrls = {};
                     $scope.mediums = [];
                     $scope.url = 'https://www.luxola.com';
+                    $scope.campaign = 'coucou';
                     $http.get('sources.json').success(function(data){
                         console.log(data);
                         $scope.mediums = data.mediums;
@@ -111,9 +135,18 @@
                         return text;
                     }
 
-                    $http.post('https://www.googleapis.com/urlshortener/v1/url?fields=id&alt=json&key=AIzaSyBmU2wjC5xwMIdKKHyyE_wW-6ZD4uzYsfs', {longUrl:'https://www.villa-bali.com/'}).success(function(data){
-                        console.log(data);
-                    });
+                    var generateShortUrl = function(url){
+                        console.log('test');
+                        if (!$scope.shortUrls[url]) {
+                            $http.post('https://www.googleapis.com/urlshortener/v1/url?fields=id&alt=json&key=AIzaSyBmU2wjC5xwMIdKKHyyE_wW-6ZD4uzYsfs', {longUrl:'https://www.villa-bali.com/'}).success(function(data){
+                                $scope.shortUrls[url] = data.id;
+                            });
+                        }
+                    }
+                    $scope.generateShortUrl = generateShortUrl;
+                    $scope.getShorUrl = function(url){
+                        return $scope.shortUrls[url] ? $scope.shortUrls[url] : null;
+                    }
                 }
         </script>
     </body>

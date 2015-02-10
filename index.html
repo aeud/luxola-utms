@@ -57,7 +57,7 @@
                             <div class="col-sm-10">
                                 <div class="input-group">
                                     <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button" ng-click="generateShortUrl()">Generate</button>
+                                        <button class="btn btn-default" type="button" ng-click="generateShortUrl(toUTMShareLink())">Generate</button>
                                     </span>
                                     <input class="form-control" type="text" value="{{shortUrl}}" readonly>
                                     <span class="input-group-btn">
@@ -131,10 +131,10 @@
                         return text;
                     }
 
-                    var generateShortUrl = function(url){
-                        console.log('test');
+                    var generateShortUrl = function(){
+                        var url = toUTMShareLink();
                         if (!$scope.shortUrls[url]) {
-                            $http.post('https://www.googleapis.com/urlshortener/v1/url?fields=id&alt=json&key=AIzaSyBmU2wjC5xwMIdKKHyyE_wW-6ZD4uzYsfs', {longUrl: toUTMShareLink()
+                            $http.post('https://www.googleapis.com/urlshortener/v1/url?fields=id&alt=json&key=AIzaSyBmU2wjC5xwMIdKKHyyE_wW-6ZD4uzYsfs', {longUrl: url
                             }).success(function(data){
                                 $scope.shortUrls[url] = data.id;
                                 $scope.shortUrl = data.id;

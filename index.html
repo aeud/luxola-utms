@@ -59,9 +59,9 @@
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" ng-click="generateShortUrl(toUTMShareLink())">Generate</button>
                                     </span>
-                                    <input class="form-control" type="text" value="{{shortUrl}}" readonly>
+                                    <input class="form-control" type="text" value="{{getShortUrl(toUTMShareLink())}}" readonly>
                                     <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button" clip-copy="copy(shortUrl)">Copy</button>
+                                        <button class="btn btn-default" type="button" clip-copy="copy(getShortUrl(toUTMShareLink()))">Copy</button>
                                     </span>
                                 </div>
                                 

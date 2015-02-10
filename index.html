@@ -140,6 +140,7 @@
                         if (!$scope.shortUrls[url]) {
                             $http.post('https://www.googleapis.com/urlshortener/v1/url?fields=id&alt=json&key=AIzaSyBmU2wjC5xwMIdKKHyyE_wW-6ZD4uzYsfs', {longUrl:'https://www.villa-bali.com/'}).success(function(data){
                                 $scope.shortUrls[url] = data.id;
+                                $scope.$apply;
                             });
                         }
                     }

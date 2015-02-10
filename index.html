@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>UTM</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <style type="text/css">
+        body{
+            padding-top: 10px;
+        }
+        </style>
+    </head>
+    <body>
+        <div ng-app="lxUTM">
+            <div ng-controller="lxUTMCtrl">
+                <div class="container">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="url" class="col-sm-2 control-label">URL</label>
+                            <div class="col-sm-10">
+                                <input type="url" class="form-control" id="url" ng-model="url">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Medium" class="col-sm-2 control-label">Medium</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="medium" ng-model="medium" ng-options="item.name for item in mediums track by item.value"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Medium" class="col-sm-2 control-label">Source</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="source" ng-model="source" ng-options="item.name for item in medium.sources track by item.value" ng-required="true"></select>
+                            </div>
+                        </div>
+                        <div class="form-group {{!validateCampaign() ? 'has-error' : ''}}">
+                            <label for="campaign" class="col-sm-2 control-label">Campaign</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="campaign" ng-model="campaign">
+                                <span id="helpBlock" class="help-block">Required more than 3 caracters</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Medium" class="col-sm-2 control-label">Link to share</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" value="{{toUTMShareLink()}}" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="toUTMShareLink()">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-default" clip-copy="copy(toUTMShareLink())">Copy URL</button>
+                                <button type="submit" class="btn btn-default" clip-copy="copy(toUTMShareLink())">Copy Short URL</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.2.0/ZeroClipboard.Core.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.2.0/ZeroClipboard.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/ng-clip/0.2.6/ng-clip.min.js"></script>
+        <script type="text/javascript">
+                angular.module('lxUTM', ['ngClipboard'])
+                .config(['ngClipProvider', function(ngClipProvider) {
+                    ngClipProvider.setPath('//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.2.0/ZeroClipboard.swf');
+                }])
+                .controller('lxUTMCtrl', ['$scope', '$http', lxCtrl]);
+                function lxCtrl($scope, $http) {
+                    $scope.mediums = [];
+                    $scope.url = 'https://www.luxola.com';
+                    $http.get('sources.json').success(function(data){
+                        console.log(data);
+                        $scope.mediums = data.mediums;
+                        $scope.medium = data.mediums[0];
+                        $scope.source = data.mediums[0].sources[0];
+                    });
+                    $scope.toUTMShareLink = function(){
+                        if ($scope.medium && $scope.source && validateCampaign()) {
+                            var urlWithoutParameters;
+                            var parametersString;
+                            var parameters = [];
+                            var url = $scope.url;
+                            var alreadyParams = /\?/gi.test(url);
+                            if (alreadyParams) {
+                                var matchExec = /^([a-zA-Z0-9:\/\-\_\.]+)\??(.*)$/gi.exec(url)
+                                urlWithoutParameters = matchExec[1];
+                                parametersString = matchExec[2];
+                                parameters = parametersString.split('&');
+                                parameters = parameters.map(function(value){
+                                    return value.split('=');
+                                })
+                            } else {
+                                urlWithoutParameters = url;
+                            };
+                            parameters.push(['utm_source', $scope.source.value]);
+                            parameters.push(['utm_medium', $scope.medium.value]);
+                            parameters.push(['utm_campaign', $scope.campaign]);
+                            parameters = parameters.map(function(value) { return value.map(function(string){ return encodeURIComponent(string); }).join('='); })
+                            url = urlWithoutParameters + '?' + parameters.join('&');
+                            return url;
+                        } else return '';   
+                    }
+                    var validateCampaign = function(){
+                        if (!$scope.campaign) return false;
+                        return $scope.campaign.length > 3;
+                    }
+                    $scope.validateCampaign = validateCampaign;
+
+                    $scope.copy = function(text){
+                        return text;
+                    }
+
+                    $http.post('https://www.googleapis.com/urlshortener/v1/url?fields=id&alt=json&key=AIzaSyBmU2wjC5xwMIdKKHyyE_wW-6ZD4uzYsfs', {longUrl:'https://www.villa-bali.com/'}).success(function(data){
+                        console.log(data);
+                    });
+                }
+        </script>
+    </body>
+</html>

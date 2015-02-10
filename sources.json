@@ -1,0 +1,40 @@
+{
+    "mediums": [
+        {
+            "name": "Paid Social",
+            "value": "paid_social",
+            "sources": [
+                {
+                    "name": "Facebook Newsfeed",
+                    "value": "facebook_newsfeed"
+                },
+                {
+                    "name": "Facebook Sidebar",
+                    "value": "facebook_sidebar"
+                },
+                {
+                    "name": "Facebook Ad",
+                    "value": "other_paid_social"
+                }
+            ]
+        },
+        {
+            "name": "Organic Social",
+            "value": "organic_social",
+            "sources": [
+                {
+                    "name": "Facebook",
+                    "value": "facebook"
+                },
+                {
+                    "name": "Twitter",
+                    "value": "twitter"
+                },
+                {
+                    "name": "Pinterest",
+                    "value": "pinterest"
+                }
+            ]
+        }
+    ]
+}
